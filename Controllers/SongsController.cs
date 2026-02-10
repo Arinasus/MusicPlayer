@@ -13,13 +13,22 @@ namespace MusicStore.Controllers
         [HttpGet]
         public IActionResult GetSongs(
             int page = 1,
-            string lang = "en",
+            string lang = "en_US",
             long seed = 12345,
             double likes = 3.7,
             int count = 10
         )
         {
             var songs = SongGenerator.GenerateSong(page, lang, seed, likes, count);
+
+            // генерируем аудио превью для каждого трека
+            foreach (var song in songs)
+            {
+                using var ms = new MemoryStream();
+                GenerateSongAudio(song, ms);
+                song.AudioPreview = ms.ToArray(); // сохраняем байты в модель
+            }
+
             return Ok(songs);
         }
 
@@ -33,7 +42,6 @@ namespace MusicStore.Controllers
             {
                 foreach (var song in songs)
                 {
-                    // безопасное имя файла
                     var safeName = string.Join("_", new[] { song.Title, song.Album, song.Artist });
                     foreach (var c in Path.GetInvalidFileNameChars())
                         safeName = safeName.Replace(c, '_');
@@ -56,7 +64,7 @@ namespace MusicStore.Controllers
         public class ExportRequest
         {
             public int Page { get; set; }
-            public string Lang { get; set; } = "en";
+            public string Lang { get; set; } = "en_US";
             public long Seed { get; set; } = 12345;
             public double Likes { get; set; } = 3.7;
             public int Count { get; set; } = 10;
@@ -68,7 +76,6 @@ namespace MusicStore.Controllers
             using var writer = new WaveFileWriter(output, new WaveFormat(sampleRate, 1));
             double noteDuration = 0.5; // каждая нота 0.5 сек
 
-            // гарантируем, что есть хотя бы одна нота
             if (song.Notes == null || song.Notes.Count == 0)
                 song.Notes = new List<string> { "C4", "E4", "G4" };
 
