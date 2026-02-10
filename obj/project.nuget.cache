@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "HMaveIzCudo=",
+  "dgSpecHash": "BBSLeZp4u3s=",
   "success": true,
-  "projectFilePath": "D:\\Курсы\\MusicStore\\MusicStore.csproj",
+  "projectFilePath": "D:\\Курсы\\MusicPlayer\\MusicStore.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\HP\\.nuget\\packages\\bogus\\35.6.5\\bogus.35.6.5.nupkg.sha512",
     "C:\\Users\\HP\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",

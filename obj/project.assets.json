@@ -965,11 +965,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Курсы\\MusicStore\\MusicStore.csproj",
+      "projectUniqueName": "D:\\Курсы\\MusicPlayer\\MusicStore.csproj",
       "projectName": "MusicStore",
-      "projectPath": "D:\\Курсы\\MusicStore\\MusicStore.csproj",
+      "projectPath": "D:\\Курсы\\MusicPlayer\\MusicStore.csproj",
       "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-      "outputPath": "D:\\Курсы\\MusicStore\\obj\\",
+      "outputPath": "D:\\Курсы\\MusicPlayer\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
