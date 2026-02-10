@@ -102,41 +102,68 @@ namespace MusicStore.Services
         }
 
         private static async Task<string?> GenerateCoverImage(string title, string artist, string genre, long seed)
+{
+    var token = Environment.GetEnvironmentVariable("HF_API_TOKEN");
+    using var client = new HttpClient();
+    client.DefaultRequestHeaders.Authorization =
+        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+    var url = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5";
+    var payload = new { inputs = $"{genre} abstract album cover background, seed={seed}" };
+    var json = System.Text.Json.JsonSerializer.Serialize(payload);
+
+    var response = await client.PostAsync(url, new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+
+    // Логируем тип контента
+    var contentType = response.Content.Headers.ContentType?.MediaType;
+    Console.WriteLine($"Cover API content-type: {contentType}");
+
+    if (contentType != null && contentType.Contains("json"))
+    {
+        var errorJson = await response.Content.ReadAsStringAsync();
+        Console.WriteLine($"Cover API error: {errorJson}");
+        return null;
+    }
+
+    if (!response.IsSuccessStatusCode)
+    {
+        Console.WriteLine($"Cover API failed: {response.StatusCode}");
+        return null;
+    }
+
+    var imageBytes = await response.Content.ReadAsByteArrayAsync();
+
+    try
+    {
+        using var bitmap = SKBitmap.Decode(imageBytes);
+        if (bitmap == null)
         {
-            // 1. Получаем фон из HuggingFace API
-            var token = Environment.GetEnvironmentVariable("HF_API_TOKEN");
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            var url = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5";
-            var payload = new { inputs = $"{genre} abstract album cover background, seed={seed}" };
-            var json = JsonSerializer.Serialize(payload);
-
-            var response = await client.PostAsync(url, new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
-            if (!response.IsSuccessStatusCode) return null;
-
-            var imageBytes = await response.Content.ReadAsByteArrayAsync();
-
-            // 2. Рисуем текст поверх
-            using var bitmap = SKBitmap.Decode(imageBytes);
-            using var canvas = new SKCanvas(bitmap);
-
-            using var paint = new SKPaint
-            {
-                Color = SKColors.White,
-                TextSize = 48,
-                IsAntialias = true,
-                Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold)
-            };
-
-            canvas.DrawText(title, 50, 100, paint);
-            canvas.DrawText(artist, 50, 160, paint);
-
-            // 3. Сохраняем результат в PNG и конвертируем в Base64
-            using var image = SKImage.FromBitmap(bitmap);
-            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
-            return Convert.ToBase64String(data.ToArray());
+            Console.WriteLine("SKBitmap.Decode returned null — данные не картинка");
+            return null;
         }
+
+        using var canvas = new SKCanvas(bitmap);
+        using var paint = new SKPaint
+        {
+            Color = SKColors.White,
+            TextSize = 48,
+            IsAntialias = true,
+            Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold)
+        };
+
+        canvas.DrawText(title, 50, 100, paint);
+        canvas.DrawText(artist, 50, 160, paint);
+
+        using var image = SKImage.FromBitmap(bitmap);
+        using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+        return Convert.ToBase64String(data.ToArray());
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Cover generation exception: {ex.Message}");
+        return null;
+    }
+}
+
     }
 }
