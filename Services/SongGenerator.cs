@@ -103,7 +103,7 @@ namespace MusicStore.Services
 
         private static async Task<string?> GenerateCoverImage(string title, string artist, string genre, long seed)
 {
-    var token = Environment.GetEnvironmentVariable("HF_API_TOK");
+    var token = Environment.GetEnvironmentVariable("HF_API_TOKEN");
     using var client = new HttpClient();
     client.DefaultRequestHeaders.Authorization =
         new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
