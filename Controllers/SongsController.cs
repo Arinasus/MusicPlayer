@@ -26,28 +26,30 @@ namespace MusicStore.Controllers
             return Ok(songs);
         }
 
-        [HttpPost("exportZip")]
-        public IActionResult ExportZip([FromBody] List<Song> songs)
-        {
-            using var ms = new MemoryStream();
-            using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true))
-            {
-                foreach (var song in songs)
-                {
-                    var entryName = $"{song.Title}_{song.Album}_{song.Artist}.mp3";
-                    var entry = archive.CreateEntry(entryName);
-                    using var entryStream = entry.Open();
-
-                    using var waveOut = new MemoryStream();
-                    GenerateSongAudio(song, waveOut);
-                    waveOut.Position = 0;
-                    waveOut.CopyTo(entryStream);
-                }
-            }
-            ms.Position = 0;
-            return File(ms.ToArray(), "application/zip", "songs.zip");
+        [HttpPost("exportZip")] 
+        public IActionResult ExportZip([FromBody] ExportRequest req) 
+        { 
+            var songs = SongGenerator.GenerateSong(req.Page, req.Lang, req.Seed, req.Likes, req.Count); 
+            using var ms = new MemoryStream(); using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true)) { 
+                foreach (var song in songs) { var entryName = $"{song.Title}_{song.Album}_{song.Artist}.mp3"; 
+                var entry = archive.CreateEntry(entryName); 
+                using var entryStream = entry.Open(); 
+                using var waveOut = new MemoryStream(); 
+                GenerateSongAudio(song, waveOut); 
+                waveOut.Position = 0; 
+                waveOut.CopyTo(entryStream); 
+                } 
+                } ms.Position = 0; 
+                return File(ms.ToArray(), "application/zip", "songs.zip"); 
         }
-
+        
+        public class ExportRequest { 
+            public int Page { get; set; } 
+            public string Lang { get; set; } = "en"; 
+            public long Seed { get; set; } = 12345; 
+            public double Likes { get; set; } = 3.7; 
+            public int Count { get; set; } = 10; 
+        }
         private static void GenerateSongAudio(Song song, Stream output)
         {
             int sampleRate = 44100; 
