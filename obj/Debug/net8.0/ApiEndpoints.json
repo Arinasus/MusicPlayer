@@ -1,0 +1,54 @@
+[
+  {
+    "ContainingType": "MusicStore.Controllers.SongsController",
+    "Method": "GetSongs",
+    "RelativePath": "api/Songs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "lang",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "seed",
+        "Type": "System.Int64",
+        "IsRequired": false
+      },
+      {
+        "Name": "likes",
+        "Type": "System.Double",
+        "IsRequired": false
+      },
+      {
+        "Name": "count",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MusicStore.Controllers.SongsController",
+    "Method": "ExportZip",
+    "RelativePath": "api/Songs/exportZip",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "songs",
+        "Type": "System.Collections.Generic.List\u00601[[MusicStore.Models.Song, MusicStore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]
