@@ -53,12 +53,12 @@ namespace MusicStore.Controllers
         private static void GenerateSongAudio(Song song, Stream output)
         {
             int sampleRate = 44100; 
-            using var mp3Writer = new LameMP3FileWriter(output, new WaveFormat(sampleRate, 1), LAMEPreset.VBR_90); 
+            using var writer = new WaveFileWriter(output, new WaveFormat(sampleRate, 1));
             double noteDuration = 0.5; // каждая нота 0.5 сек
                                        foreach (var noteName in song.Notes) { var freq = NoteFrequencies[noteName]; int samplesPerNote = (int)(sampleRate * noteDuration); 
                 for (int i = 0; i < samplesPerNote; i++) { double t = (double)i / sampleRate; 
                     short sample = (short)(Math.Sin(2 * Math.PI * freq * t) * short.MaxValue); byte[] buffer = BitConverter.GetBytes(sample); 
-                    mp3Writer.Write(buffer, 0, buffer.Length); } } }
+                    writer.Write(buffer, 0, buffer.Length); } } }
         private static readonly Dictionary<string, double> NoteFrequencies = new()
 {
     { "C4", 261.63 },
