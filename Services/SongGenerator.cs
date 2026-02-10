@@ -108,7 +108,7 @@ namespace MusicStore.Services
     client.DefaultRequestHeaders.Authorization =
         new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-    var url = "https://router.huggingface.co/models/stabilityai/stable-diffusion-2-1";
+    var url = "https://router.huggingface.co/stabilityai/stable-diffusion-xl-base-1.0";
     var payload = new { inputs = $"{genre} abstract album cover background, seed={seed}" };
     var json = System.Text.Json.JsonSerializer.Serialize(payload);
 
