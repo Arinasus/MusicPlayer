@@ -38,7 +38,8 @@ namespace MusicStore.Services
 
         int duration = (int)(notes.Count * 0.5);
         
-        var review = faker.Lorem.Sentence();
+        var review = await GetReviewFromApi(locale);
+
         songs.Add(new Song
         {
             Index = index,
@@ -63,5 +64,28 @@ namespace MusicStore.Services
         double prob = avg - baseLikes;
         return baseLikes + (rng.NextDouble() < prob ? 1 : 0);
     }
+    private static async Task<string> GetReviewFromApi(string lang)
+{
+    using var client = new HttpClient();
+    client.DefaultRequestHeaders.Authorization =
+        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", "HF_API_TOKEN");
+
+    // пример: берем датасет amazon_reviews_multi
+    var url = $"https://api-inference.huggingface.co/datasets/amazon_reviews_multi/{lang}";
+    var response = await client.GetAsync(url);
+
+    if (!response.IsSuccessStatusCode)
+        return "No review available";
+
+    var json = await response.Content.ReadAsStringAsync();
+    using var doc = System.Text.Json.JsonDocument.Parse(json);
+
+    // вытаскиваем поле "review_body"
+    if (doc.RootElement.TryGetProperty("review_body", out var review))
+        return review.GetString() ?? "No review";
+
+    return "No review";
+}
+
 }
 }
