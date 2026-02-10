@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicStore\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{42E8D728-CC12-4200-AD24-F2DE5CA422B5}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicstore\\controllers\\songscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{42E8D728-CC12-4200-AD24-F2DE5CA422B5}|MusicStore.csproj|solutionrelative:controllers\\songscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{42E8D728-CC12-4200-AD24-F2DE5CA422B5}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicstore\\services\\songgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{42E8D728-CC12-4200-AD24-F2DE5CA422B5}|MusicStore.csproj|solutionrelative:services\\songgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{42E8D728-CC12-4200-AD24-F2DE5CA422B5}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicstore\\models\\song.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{42E8D728-CC12-4200-AD24-F2DE5CA422B5}|MusicStore.csproj|solutionrelative:models\\song.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{42E8D728-CC12-4200-AD24-F2DE5CA422B5}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicstore\\controllers\\songscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{42E8D728-CC12-4200-AD24-F2DE5CA422B5}|MusicStore.csproj|solutionrelative:controllers\\songscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{42E8D728-CC12-4200-AD24-F2DE5CA422B5}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicstore\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -30,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,20 +42,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "SongGenerator.cs",
               "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicStore\\Services\\SongGenerator.cs",
               "RelativeDocumentMoniker": "Services\\SongGenerator.cs",
               "ToolTip": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicStore\\Services\\SongGenerator.cs",
               "RelativeToolTip": "Services\\SongGenerator.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADAAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAQwDAAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-02-09T14:47:14.863Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "Song.cs",
               "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicStore\\Models\\Song.cs",
               "RelativeDocumentMoniker": "Models\\Song.cs",
@@ -68,13 +68,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "SongsController.cs",
               "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicStore\\Controllers\\SongsController.cs",
               "RelativeDocumentMoniker": "Controllers\\SongsController.cs",
               "ToolTip": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicStore\\Controllers\\SongsController.cs",
               "RelativeToolTip": "Controllers\\SongsController.cs",
-              "ViewState": "AgIAACsAAAAAAAAAAAAiwDwAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAIwEEAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-02-09T14:44:01.567Z",
               "EditorCaption": ""
