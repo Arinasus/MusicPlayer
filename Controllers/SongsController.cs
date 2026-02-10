@@ -11,7 +11,7 @@ namespace MusicStore.Controllers
     public class SongsController : ControllerBase
     {
         [HttpGet]
-        public IActionResult GetSongs(
+        public async Task<IActionResult> GetSongs(
             int page = 1,
             string lang = "en_US",
             long seed = 12345,
@@ -19,23 +19,22 @@ namespace MusicStore.Controllers
             int count = 10
         )
         {
-            var songs = SongGenerator.GenerateSong(page, lang, seed, likes, count);
+            var songs = await SongGenerator.GenerateSong(page, lang, seed, likes, count);
 
-            // генерируем аудио превью для каждого трека
             foreach (var song in songs)
             {
                 using var ms = new MemoryStream();
                 GenerateSongAudio(song, ms);
-                song.AudioPreview = ms.ToArray(); // сохраняем байты в модель
+                song.AudioPreview = ms.ToArray();
             }
 
             return Ok(songs);
         }
 
         [HttpPost("exportZip")]
-        public IActionResult ExportZip([FromBody] ExportRequest req)
+        public async Task<IActionResult> ExportZip([FromBody] ExportRequest req)
         {
-            var songs = SongGenerator.GenerateSong(req.Page, req.Lang, req.Seed, req.Likes, req.Count);
+            var songs = await SongGenerator.GenerateSong(req.Page, req.Lang, req.Seed, req.Likes, req.Count);
 
             using var ms = new MemoryStream();
             using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true))
@@ -74,7 +73,7 @@ namespace MusicStore.Controllers
         {
             int sampleRate = 44100;
             using var writer = new WaveFileWriter(output, new WaveFormat(sampleRate, 1));
-            double noteDuration = 0.5; // каждая нота 0.5 сек
+            double noteDuration = 0.5;
 
             if (song.Notes == null || song.Notes.Count == 0)
                 song.Notes = new List<string> { "C4", "E4", "G4" };
