@@ -11,5 +11,7 @@
         public List<string> Notes { get; set; } = new();
         public int Duration { get; set; }
         public string Review { get; set; } ="";
+        public string Language { get; set; } = "en";
+        public string CoverImage { get; set; } = string.Empty;
     }
 }
