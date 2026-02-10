@@ -39,7 +39,8 @@ namespace MusicStore.Services
                 int duration = (int)(notes.Count * 0.5);
 
                 var review = await GetReviewFromApi(locale);
-
+                var coverPrompt = $"{genre} album cover, {artist}"; 
+                var coverImageBase64 = await GenerateCoverFromApi(coverPrompt);
                 songs.Add(new Song
                 {
                     Index = index,
@@ -50,7 +51,8 @@ namespace MusicStore.Services
                     Likes = likes,
                     Notes = notes,
                     Duration = duration,
-                    Review = review
+                    Review = review, 
+                    CoverImageBase64 = coverImageBase64
                 });
             }
 
@@ -85,5 +87,23 @@ namespace MusicStore.Services
 
             return "No review";
         }
+        private static async Task<string> GenerateCoverFromApi(string prompt)
+{
+    var token = Environment.GetEnvironmentVariable("HF_API_TOKEN");
+    using var client = new HttpClient();
+    client.DefaultRequestHeaders.Authorization =
+        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+    var url = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5";
+    var payload = new { inputs = prompt };
+    var json = System.Text.Json.JsonSerializer.Serialize(payload);
+
+    var response = await client.PostAsync(url, new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+    if (!response.IsSuccessStatusCode) return null;
+
+    var bytes = await response.Content.ReadAsByteArrayAsync();
+    return Convert.ToBase64String(bytes); // вернём base64 для фронта
+}
+
     }
 }
