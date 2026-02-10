@@ -1,9 +1,6 @@
 ﻿using MusicStore.Models;
 using System.Globalization;
 using Bogus;
-using MusicStore.Controllers;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using static Bogus.DataSets.Name;
 namespace MusicStore.Services
 {
     public static class SongGenerator
