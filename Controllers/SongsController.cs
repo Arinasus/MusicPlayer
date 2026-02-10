@@ -33,7 +33,12 @@ namespace MusicStore.Controllers
             {
                 foreach (var song in songs)
                 {
-                    var entryName = $"{song.Title}_{song.Album}_{song.Artist}.wav"; // WAV вместо MP3
+                    // безопасное имя файла
+                    var safeName = string.Join("_", new[] { song.Title, song.Album, song.Artist });
+                    foreach (var c in Path.GetInvalidFileNameChars())
+                        safeName = safeName.Replace(c, '_');
+
+                    var entryName = $"{safeName}.wav";
                     var entry = archive.CreateEntry(entryName);
                     using var entryStream = entry.Open();
 
@@ -62,6 +67,10 @@ namespace MusicStore.Controllers
             int sampleRate = 44100;
             using var writer = new WaveFileWriter(output, new WaveFormat(sampleRate, 1));
             double noteDuration = 0.5; // каждая нота 0.5 сек
+
+            // гарантируем, что есть хотя бы одна нота
+            if (song.Notes == null || song.Notes.Count == 0)
+                song.Notes = new List<string> { "C4", "E4", "G4" };
 
             foreach (var noteName in song.Notes)
             {

@@ -10,5 +10,6 @@
         public int Likes { get; set; }
         public List<string> Notes { get; set; } = new();
         public int Duration { get; set; }
+        public string Review { get; set; } ="";
     }
 }

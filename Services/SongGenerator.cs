@@ -8,7 +8,7 @@ namespace MusicStore.Services
 {
     public static class SongGenerator
 {
-    private static readonly string[] SupportedLocales = { "en", "de", "fr", "it", "es", "pt", "ar" };
+    private static readonly string[] SupportedLocales = { "en", "de", "fr", "it", "es", "pt", "ar", "uk_UA" };
     private static readonly string[] NoteSet = { "C4", "D4", "E4", "F4", "G4", "A4", "B4" };
 
     public static List<Song> GenerateSong(int page, string lang, long seed, double avgLikes, int count = 10)
@@ -40,7 +40,8 @@ namespace MusicStore.Services
             notes.Add(NoteSet[rngNotes.Next(NoteSet.Length)]);
 
         int duration = (int)(notes.Count * 0.5);
-
+        
+        var review = faker.Lorem.Sentence();
         songs.Add(new Song
         {
             Index = index,
@@ -50,7 +51,8 @@ namespace MusicStore.Services
             Genre = genre,
             Likes = likes,
             Notes = notes,
-            Duration = duration
+            Duration = duration,
+            Review = review
         });
     }
 
