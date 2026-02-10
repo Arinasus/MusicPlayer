@@ -1,5 +1,7 @@
 ﻿using MusicStore.Models;
 using Bogus;
+using SkiaSharp;
+using System.Text.Json;
 
 namespace MusicStore.Services
 {
@@ -7,6 +9,17 @@ namespace MusicStore.Services
     {
         private static readonly string[] SupportedLocales = { "en_US", "de_DE", "uk_UA" };
         private static readonly string[] NoteSet = { "C4", "D4", "E4", "F4", "G4", "A4", "B4" };
+
+        // Загружаем отзывы один раз при старте
+        private static readonly Dictionary<string, string[]> Reviews = LoadReviews();
+
+        private static Dictionary<string, string[]> LoadReviews()
+        {
+            var path = Path.Combine(AppContext.BaseDirectory, "Data", "reviews.json");
+            var json = File.ReadAllText(path);
+            return JsonSerializer.Deserialize<Dictionary<string, string[]>>(json)
+                   ?? new Dictionary<string, string[]>();
+        }
 
         public static async Task<List<Song>> GenerateSong(int page, string lang, long seed, double avgLikes, int count = 10)
         {
@@ -23,14 +36,27 @@ namespace MusicStore.Services
             {
                 int index = (page - 1) * count + i;
 
+                // Song title — случайное название
                 var title = faker.Commerce.ProductName();
-                var artist = faker.Name.FullName();
-                var album = rngData.NextDouble() > 0.5 ? faker.Commerce.ProductName() : "Single";
+
+                // Artist — имя или группа
+                string artist = rngData.NextDouble() > 0.5
+                    ? faker.Name.FullName()
+                    : faker.Company.CompanyName();
+
+                // Album — случайное название или "Single"
+                string album = rngData.NextDouble() > 0.5
+                    ? faker.Commerce.ProductName()
+                    : "Single";
+
+                // Genre
                 var genre = faker.Music.Genre();
 
+                // Likes
                 var rngLikes = new Random((int)(seed ^ (page * 1000 + i)));
                 int likes = GenerateLikes(rngLikes, avgLikes);
 
+                // Notes
                 var rngNotes = new Random((int)(seed ^ (page * 2000 + i)));
                 var notes = new List<string>();
                 for (int n = 0; n < 8; n++)
@@ -38,9 +64,12 @@ namespace MusicStore.Services
 
                 int duration = (int)(notes.Count * 0.5);
 
-                var review = await GetReviewFromApi(locale);
-                var coverPrompt = $"{genre} album cover, {artist}"; 
-                var coverImageBase64 = await GenerateCoverFromApi(coverPrompt);
+                // Cover image
+                var coverImageBase64 = await GenerateCoverImage(title, artist, genre, seed);
+
+                // Review из Data/reviews.json
+                var review = GetRandomReview(locale, rngData);
+
                 songs.Add(new Song
                 {
                     Index = index,
@@ -51,8 +80,8 @@ namespace MusicStore.Services
                     Likes = likes,
                     Notes = notes,
                     Duration = duration,
-                    Review = review, 
-                    CoverImageBase64 = coverImageBase64
+                    CoverImageBase64 = coverImageBase64,
+                    Review = review
                 });
             }
 
@@ -66,44 +95,48 @@ namespace MusicStore.Services
             return baseLikes + (rng.NextDouble() < prob ? 1 : 0);
         }
 
-        private static async Task<string> GetReviewFromApi(string lang)
+        private static string GetRandomReview(string locale, Random rng)
         {
+            var reviewSet = Reviews.ContainsKey(locale) ? Reviews[locale] : Reviews["en_US"];
+            return reviewSet[rng.Next(reviewSet.Length)];
+        }
+
+        private static async Task<string?> GenerateCoverImage(string title, string artist, string genre, long seed)
+        {
+            // 1. Получаем фон из HuggingFace API
             var token = Environment.GetEnvironmentVariable("HF_API_TOKEN");
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            var url = $"https://api-inference.huggingface.co/datasets/amazon_reviews_multi/{lang}";
-            var response = await client.GetAsync(url);
+            var url = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5";
+            var payload = new { inputs = $"{genre} abstract album cover background, seed={seed}" };
+            var json = JsonSerializer.Serialize(payload);
 
-            if (!response.IsSuccessStatusCode)
-                return "No review available";
+            var response = await client.PostAsync(url, new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+            if (!response.IsSuccessStatusCode) return null;
 
-            var json = await response.Content.ReadAsStringAsync();
-            using var doc = System.Text.Json.JsonDocument.Parse(json);
+            var imageBytes = await response.Content.ReadAsByteArrayAsync();
 
-            if (doc.RootElement.TryGetProperty("review_body", out var review))
-                return review.GetString() ?? "No review";
+            // 2. Рисуем текст поверх
+            using var bitmap = SKBitmap.Decode(imageBytes);
+            using var canvas = new SKCanvas(bitmap);
 
-            return "No review";
+            using var paint = new SKPaint
+            {
+                Color = SKColors.White,
+                TextSize = 48,
+                IsAntialias = true,
+                Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold)
+            };
+
+            canvas.DrawText(title, 50, 100, paint);
+            canvas.DrawText(artist, 50, 160, paint);
+
+            // 3. Сохраняем результат в PNG и конвертируем в Base64
+            using var image = SKImage.FromBitmap(bitmap);
+            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+            return Convert.ToBase64String(data.ToArray());
         }
-        private static async Task<string> GenerateCoverFromApi(string prompt)
-{
-    var token = Environment.GetEnvironmentVariable("HF_API_TOKEN");
-    using var client = new HttpClient();
-    client.DefaultRequestHeaders.Authorization =
-        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-    var url = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5";
-    var payload = new { inputs = prompt };
-    var json = System.Text.Json.JsonSerializer.Serialize(payload);
-
-    var response = await client.PostAsync(url, new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
-    if (!response.IsSuccessStatusCode) return null;
-
-    var bytes = await response.Content.ReadAsByteArrayAsync();
-    return Convert.ToBase64String(bytes); // вернём base64 для фронта
-}
-
     }
 }
