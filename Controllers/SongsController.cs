@@ -20,6 +20,14 @@ namespace MusicStore.Controllers
         )
         {
             var songs = await SongGenerator.GenerateSong(page, lang, seed, likes, count);
+
+            foreach (var song in songs)
+            {
+                using var ms = new MemoryStream();
+                GenerateSongAudio(song, ms);
+                song.AudioPreview = ms.ToArray();
+            }
+
             return Ok(songs);
         }
 
