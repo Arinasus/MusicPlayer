@@ -12,6 +12,8 @@
         public int Duration { get; set; }
         public string Review { get; set; } = "";
         public string? CoverImageBase64 { get; set; }
+        public string? CoverImageUrl { get; set; }
+
         public byte[] AudioPreview { get; set; } = Array.Empty<byte>();
     }
 }

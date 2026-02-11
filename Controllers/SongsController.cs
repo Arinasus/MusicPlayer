@@ -10,6 +10,16 @@ namespace MusicStore.Controllers
     [Route("api/[controller]")]
     public class SongsController : ControllerBase
     {
+        private readonly ISongRepository _repo;
+        private readonly IImageService _imageService;
+
+        // Внедрение зависимостей через конструктор
+        public SongsController(ISongRepository repo, IImageService imageService)
+        {
+            _repo = repo;
+            _imageService = imageService;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetSongs(
             int page = 1,
@@ -67,6 +77,22 @@ namespace MusicStore.Controllers
             public long Seed { get; set; } = 12345;
             public double Likes { get; set; } = 3.7;
             public int Count { get; set; } = 10;
+        }
+
+        [HttpGet("{id}/cover")]
+        public async Task<IActionResult> GetCover(int id)
+        {
+            var song = await _repo.GetByIdAsync(id);
+            if (song == null) return NotFound();
+
+            if (!string.IsNullOrEmpty(song.CoverImageUrl))
+                return Ok(new { cover = song.CoverImageUrl });
+
+            var coverUrl = await _imageService.GenerateCoverAsync(song.Title, song.Artist, song.Genre);
+            song.CoverImageUrl = coverUrl;
+            await _repo.UpdateAsync(song);
+
+            return Ok(new { cover = coverUrl });
         }
 
         private static void GenerateSongAudio(Song song, Stream output)

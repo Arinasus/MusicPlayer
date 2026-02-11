@@ -25,71 +25,60 @@ namespace MusicStore.Services
         }
 
         public static async Task<List<Song>> GenerateSong(int page, string lang, long seed, double avgLikes, int count = 10)
+{
+    var dataSeed = (int)(seed ^ page);
+    Randomizer.Seed = new Random(dataSeed);
+    var rngData = new Random(dataSeed);
+
+    var locale = SupportedLocales.Contains(lang) ? lang : "en_US";
+    var faker = new Faker(locale);
+
+    var songs = new List<Song>();
+
+    for (int i = 1; i <= count; i++)
+    {
+        int index = (page - 1) * count + i;
+
+        var title = faker.Commerce.ProductName();
+        string artist = rngData.NextDouble() > 0.5
+            ? faker.Name.FullName()
+            : faker.Company.CompanyName();
+        string album = rngData.NextDouble() > 0.5
+            ? faker.Commerce.ProductName()
+            : "Single";
+        var genre = faker.Music.Genre();
+
+        var rngLikes = new Random((int)(seed ^ (page * 1000 + i)));
+        int likes = GenerateLikes(rngLikes, avgLikes);
+
+        var rngNotes = new Random((int)(seed ^ (page * 2000 + i)));
+        var notes = new List<string>();
+        for (int n = 0; n < 8; n++)
+            notes.Add(NoteSet[rngNotes.Next(NoteSet.Length)]);
+
+        int duration = (int)(notes.Count * 0.5);
+
+        var review = GetRandomReview(locale, rngData);
+
+        songs.Add(new Song
         {
-            var dataSeed = (int)(seed ^ page);
-            Randomizer.Seed = new Random(dataSeed);
-            var rngData = new Random(dataSeed);
+            Index = index,
+            Title = title,
+            Artist = artist,
+            Album = album,
+            Genre = genre,
+            Likes = likes,
+            Notes = notes,
+            Duration = duration,
+            CoverImageBase64 = null, // обложка генерируется лениво
+            Review = review,
+            CoverImageUrl = null
+        });
+    }
 
-            var locale = SupportedLocales.Contains(lang) ? lang : "en_US";
-            var faker = new Faker(locale);
+    return songs;
+}
 
-            var songs = new List<Song>();
-
-            for (int i = 1; i <= count; i++)
-            {
-                int index = (page - 1) * count + i;
-
-                // Song title — случайное название
-                var title = faker.Commerce.ProductName();
-
-                // Artist — имя или группа
-                string artist = rngData.NextDouble() > 0.5
-                    ? faker.Name.FullName()
-                    : faker.Company.CompanyName();
-
-                // Album — случайное название или "Single"
-                string album = rngData.NextDouble() > 0.5
-                    ? faker.Commerce.ProductName()
-                    : "Single";
-
-                // Genre
-                var genre = faker.Music.Genre();
-
-                // Likes
-                var rngLikes = new Random((int)(seed ^ (page * 1000 + i)));
-                int likes = GenerateLikes(rngLikes, avgLikes);
-
-                // Notes
-                var rngNotes = new Random((int)(seed ^ (page * 2000 + i)));
-                var notes = new List<string>();
-                for (int n = 0; n < 8; n++)
-                    notes.Add(NoteSet[rngNotes.Next(NoteSet.Length)]);
-
-                int duration = (int)(notes.Count * 0.5);
-
-                // Cover image
-                var coverImageBase64 = await GenerateCoverImage(title, artist, genre, seed);
-
-                // Review из Data/reviews.json
-                var review = GetRandomReview(locale, rngData);
-
-                songs.Add(new Song
-                {
-                    Index = index,
-                    Title = title,
-                    Artist = artist,
-                    Album = album,
-                    Genre = genre,
-                    Likes = likes,
-                    Notes = notes,
-                    Duration = duration,
-                    CoverImageBase64 = coverImageBase64,
-                    Review = review
-                });
-            }
-
-            return songs;
-        }
 
         private static int GenerateLikes(Random rng, double avg)
         {
