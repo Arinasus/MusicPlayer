@@ -25,59 +25,89 @@ namespace MusicStore.Services
         }
 
         public static async Task<List<Song>> GenerateSong(int page, string lang, long seed, double avgLikes, int count = 10)
-{
-    var dataSeed = (int)(seed ^ page);
-    Randomizer.Seed = new Random(dataSeed);
-    var rngData = new Random(dataSeed);
-
-    var locale = SupportedLocales.Contains(lang) ? lang : "en";
-    var faker = new Faker(locale);
-
-    var songs = new List<Song>();
-
-    for (int i = 1; i <= count; i++)
-    {
-        int index = (page - 1) * count + i;
-
-        var title = faker.Commerce.ProductName();
-        string artist = rngData.NextDouble() > 0.5
-            ? faker.Name.FullName()
-            : faker.Company.CompanyName();
-        string album = rngData.NextDouble() > 0.5
-            ? faker.Commerce.ProductName()
-            : "Single";
-        var genre = faker.Music.Genre();
-
-        var rngLikes = new Random((int)(seed ^ (page * 1000 + i)));
-        int likes = GenerateLikes(rngLikes, avgLikes);
-
-        var rngNotes = new Random((int)(seed ^ (page * 2000 + i)));
-        var notes = new List<string>();
-        for (int n = 0; n < 8; n++)
-            notes.Add(NoteSet[rngNotes.Next(NoteSet.Length)]);
-
-        int duration = (int)(notes.Count * 0.5);
-
-        var review = GetRandomReview(locale, rngData);
-
-        songs.Add(new Song
         {
-            Index = index,
-            Title = title,
-            Artist = artist,
-            Album = album,
-            Genre = genre,
-            Likes = likes,
-            Notes = notes,
-            Duration = duration,
-            CoverImageBase64 = null, // обложка генерируется лениво
-            Review = review,
-            CoverImageUrl = null
-        });
-    }
+            var dataSeed = (int)(seed ^ page);
+            Randomizer.Seed = new Random(dataSeed);
+            var rng = new Random(dataSeed);
 
-    return songs;
-}
+            var locale = SupportedLocales.Contains(lang) ? lang : "en";
+
+            // Bogus для английского
+            var faker = new Faker("en");
+
+            // Загружаем словари для DE/UK
+            LocaleData? dict = null;
+            if (locale != "en")
+            {
+                var path = Path.Combine(AppContext.BaseDirectory, "Resources", "Data", "locales", $"{locale}.json");
+                var json = File.ReadAllText(path);
+                dict = JsonSerializer.Deserialize<LocaleData>(json);
+            }
+
+            var songs = new List<Song>();
+
+            for (int i = 1; i <= count; i++)
+            {
+                int index = (page - 1) * count + i;
+
+                string title;
+                string artist;
+                string album;
+                string genre;
+
+                if (locale == "en")
+                {
+                    // Полностью Bogus
+                    title = faker.Commerce.ProductName();
+                    artist = rng.NextDouble() > 0.5 ? faker.Name.FullName() : faker.Company.CompanyName();
+                    album = rng.NextDouble() > 0.5 ? faker.Commerce.ProductName() : "Single";
+                    genre = faker.Music.Genre();
+                }
+                else
+                {
+                    // Локализованные словари
+                    title = GenerateTitle(dict!, rng);
+                    artist = GenerateArtist(dict!, rng);
+                    album = rng.NextDouble() > 0.5 ? GenerateAlbum(dict!, rng) : "Single";
+
+                    // жанры можно оставить от Bogus — они универсальны
+                    genre = faker.Music.Genre();
+                }
+
+                // Likes — детерминированно
+                var rngLikes = new Random((int)(seed ^ (page * 1000 + i)));
+                int likes = GenerateLikes(rngLikes, avgLikes);
+
+                // Notes — детерминированно
+                var rngNotes = new Random((int)(seed ^ (page * 2000 + i)));
+                var notes = new List<string>();
+                for (int n = 0; n < 8; n++)
+                    notes.Add(NoteSet[rngNotes.Next(NoteSet.Length)]);
+
+                int duration = (int)(notes.Count * 0.5);
+
+                // Reviews — локализованные
+                var review = GetRandomReview(locale, rng);
+
+                songs.Add(new Song
+                {
+                    Index = index,
+                    Title = title,
+                    Artist = artist,
+                    Album = album,
+                    Genre = genre,
+                    Likes = likes,
+                    Notes = notes,
+                    Duration = duration,
+                    CoverImageBase64 = null,
+                    Review = review,
+                    CoverImageUrl = null
+                });
+            }
+
+            return songs;
+        }
+
 
 
         private static int GenerateLikes(Random rng, double avg)
@@ -163,6 +193,36 @@ private static string GenerateEmptyPng()
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+X2XcAAAAASUVORK5CYII=";
     return emptyPngBase64;
 }
+        private static string GenerateTitle(LocaleData dict, Random rng)
+        {
+            var w1 = dict.TitleWords[rng.Next(dict.TitleWords.Length)];
+            var w2 = dict.AlbumWords[rng.Next(dict.AlbumWords.Length)];
+            return $"{w1} {w2}";
+        }
+
+        private static string GenerateAlbum(LocaleData dict, Random rng)
+        {
+            var w1 = dict.AlbumWords[rng.Next(dict.AlbumWords.Length)];
+            var w2 = dict.TitleWords[rng.Next(dict.TitleWords.Length)];
+            return $"{w1} {w2}";
+        }
+
+        private static string GenerateArtist(LocaleData dict, Random rng)
+        {
+            if (rng.NextDouble() > 0.5)
+            {
+                var first = dict.ArtistFirstNames[rng.Next(dict.ArtistFirstNames.Length)];
+                var last = dict.ArtistLastNames[rng.Next(dict.ArtistLastNames.Length)];
+                return $"{first} {last}";
+            }
+            else
+            {
+                var w1 = dict.BandWords[rng.Next(dict.BandWords.Length)];
+                var w2 = dict.TitleWords[rng.Next(dict.TitleWords.Length)];
+                return $"{w1} {w2}";
+            }
+        }
+
 
     }
 }
