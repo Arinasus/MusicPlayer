@@ -3,16 +3,20 @@
   "WorkspaceRootPath": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicplayer\\musicstore.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|solutionrelative:musicstore.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicplayer\\services\\songgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|solutionrelative:services\\songgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicplayer\\models\\localedata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|solutionrelative:models\\localedata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicplayer\\controllers\\songscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|solutionrelative:controllers\\songscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicplayer\\services\\songgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|solutionrelative:services\\songgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicplayer\\musicstore.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|solutionrelative:musicstore.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicplayer\\services\\imageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -38,7 +42,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -50,19 +54,33 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
+              "Title": "LocaleData.cs",
+              "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Models\\LocaleData.cs",
+              "RelativeDocumentMoniker": "Models\\LocaleData.cs",
+              "ToolTip": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Models\\LocaleData.cs",
+              "RelativeToolTip": "Models\\LocaleData.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-11T15:16:02.577Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
               "Title": "SongGenerator.cs",
               "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Services\\SongGenerator.cs",
               "RelativeDocumentMoniker": "Services\\SongGenerator.cs",
               "ToolTip": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Services\\SongGenerator.cs",
               "RelativeToolTip": "Services\\SongGenerator.cs",
-              "ViewState": "AgIAAHYAAAAAAAAAAAAwwIsAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAMIAAAAAAAAAAAAQwMkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-10T17:05:19.417Z"
+              "WhenOpened": "2026-02-10T17:05:19.417Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "SongsController.cs",
               "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Controllers\\SongsController.cs",
               "RelativeDocumentMoniker": "Controllers\\SongsController.cs",
@@ -70,24 +88,25 @@
               "RelativeToolTip": "Controllers\\SongsController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-11T11:54:19.292Z"
+              "WhenOpened": "2026-02-11T11:54:19.292Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "MusicStore.csproj",
               "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\MusicStore.csproj",
               "RelativeDocumentMoniker": "MusicStore.csproj",
               "ToolTip": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\MusicStore.csproj",
               "RelativeToolTip": "MusicStore.csproj",
-              "ViewState": "AgIAAAAAAADw3EBWsUUpwBoAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAADw3EBWsUUpwAQAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
               "WhenOpened": "2026-02-11T12:19:23.961Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "ImageService.cs",
               "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Services\\ImageService.cs",
               "RelativeDocumentMoniker": "Services\\ImageService.cs",
@@ -95,11 +114,12 @@
               "RelativeToolTip": "Services\\ImageService.cs",
               "ViewState": "AgIAAAUAAAAAAAAAAAAowGIAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-11T12:04:22.214Z"
+              "WhenOpened": "2026-02-11T12:04:22.214Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Dockerfile",
               "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Dockerfile",
               "RelativeDocumentMoniker": "Dockerfile",
@@ -107,11 +127,12 @@
               "RelativeToolTip": "Dockerfile",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2026-02-11T12:25:45.042Z"
+              "WhenOpened": "2026-02-11T12:25:45.042Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "MusicStore",
               "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\MusicStore.csproj",
               "RelativeDocumentMoniker": "MusicStore.csproj",
@@ -123,7 +144,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -131,7 +152,8 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-11T11:48:33.979Z"
+              "WhenOpened": "2026-02-11T11:48:33.979Z",
+              "EditorCaption": ""
             }
           ]
         }

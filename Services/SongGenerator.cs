@@ -39,7 +39,7 @@ namespace MusicStore.Services
             LocaleData? dict = null;
             if (locale != "en")
             {
-                var path = Path.Combine(AppContext.BaseDirectory, "Resources", "Data", "locales", $"{locale}.json");
+                var path = Path.Combine(AppContext.BaseDirectory, "Resources", $"{locale}.json");
                 var json = File.ReadAllText(path);
                 dict = JsonSerializer.Deserialize<LocaleData>(json);
             }
