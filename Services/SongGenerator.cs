@@ -102,69 +102,102 @@ namespace MusicStore.Services
         }
 
         private static async Task<string?> GenerateCoverImage(string title, string artist, string genre, long seed)
-{
-    var token = Environment.GetEnvironmentVariable("HF_API_TOKEN");
-    using var client = new HttpClient();
-    client.DefaultRequestHeaders.Authorization =
-        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-    var url = "https://router.huggingface.co/stabilityai/stable-diffusion-xl-base-1.0";
-
-    var payload = new { inputs = $"{genre} abstract album cover background, seed={seed}" };
-    var json = System.Text.Json.JsonSerializer.Serialize(payload);
-
-    var response = await client.PostAsync(url, new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
-
-    // Логируем тип контента
-    var contentType = response.Content.Headers.ContentType?.MediaType;
-    Console.WriteLine($"Cover API content-type: {contentType}");
-
-    if (contentType != null && contentType.Contains("json"))
-    {
-        var errorJson = await response.Content.ReadAsStringAsync();
-        Console.WriteLine($"Cover API error: {errorJson}");
-        return null;
-    }
-
-    if (!response.IsSuccessStatusCode)
-    {
-        Console.WriteLine($"Cover API failed: {response.StatusCode}");
-        return null;
-    }
-
-    var imageBytes = await response.Content.ReadAsByteArrayAsync();
-
-    try
-    {
-        using var bitmap = SKBitmap.Decode(imageBytes);
-        if (bitmap == null)
         {
-            Console.WriteLine("SKBitmap.Decode returned null — данные не картинка");
-            return null;
+            var token = Environment.GetEnvironmentVariable("REPLICATE_API_TOKEN");
+            if (string.IsNullOrEmpty(token))
+            {
+                Console.WriteLine("REPLICATE_API_TOKEN is not set!");
+                return GenerateFallbackCover(title, artist);
+            }
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Token", token);
+
+            var url = "https://api.replicate.com/v1/predictions";
+
+            var payload = new
+            {
+                version = "black-forest-labs/flux-1.1-pro",
+                input = new
+                {
+                    prompt = $"{genre} abstract album cover background, {title} by {artist}",
+                    aspect_ratio = "1:1",
+                    output_format = "png",
+                    output_quality = 80
+                }
+            };
+
+            var json = JsonSerializer.Serialize(payload);
+            var response = await client.PostAsync(url, new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorJson = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Replicate API failed: {response.StatusCode}, body: {errorJson}");
+                return GenerateFallbackCover(title, artist);
+            }
+
+            var resultJson = await response.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(resultJson);
+
+            // Replicate возвращает URL картинки в массиве "output"
+            if (doc.RootElement.TryGetProperty("output", out var outputElement) && outputElement.ValueKind == JsonValueKind.Array)
+            {
+                var imageUrl = outputElement[0].GetString();
+                if (!string.IsNullOrEmpty(imageUrl))
+                {
+                    try
+                    {
+                        var imageBytes = await client.GetByteArrayAsync(imageUrl);
+                        using var bitmap = SKBitmap.Decode(imageBytes);
+                        if (bitmap == null)
+                        {
+                            Console.WriteLine("SKBitmap.Decode returned null — данные не картинка");
+                            return GenerateFallbackCover(title, artist);
+                        }
+
+                        using var canvas = new SKCanvas(bitmap);
+                        using var paint = new SKPaint
+                        {
+                            Color = SKColors.White,
+                            TextSize = 48,
+                            IsAntialias = true,
+                            Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold)
+                        };
+
+                        canvas.DrawText(title, 50, 100, paint);
+                        canvas.DrawText(artist, 50, 160, paint);
+
+                        using var image = SKImage.FromBitmap(bitmap);
+                        using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+                        return Convert.ToBase64String(data.ToArray());
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Cover generation exception: {ex.Message}");
+                        return GenerateFallbackCover(title, artist);
+                    }
+                }
+            }
+
+            Console.WriteLine("Replicate API did not return an image URL.");
+            return GenerateFallbackCover(title, artist);
         }
 
-        using var canvas = new SKCanvas(bitmap);
-        using var paint = new SKPaint
+        private static string GenerateFallbackCover(string title, string artist)
         {
-            Color = SKColors.White,
-            TextSize = 48,
-            IsAntialias = true,
-            Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold)
-        };
+            using var bitmap = new SKBitmap(400, 400);
+            using var canvas = new SKCanvas(bitmap);
+            canvas.Clear(SKColors.DarkSlateBlue);
 
-        canvas.DrawText(title, 50, 100, paint);
-        canvas.DrawText(artist, 50, 160, paint);
+            using var paint = new SKPaint { Color = SKColors.White, TextSize = 32, IsAntialias = true };
+            canvas.DrawText(title, 20, 200, paint);
+            canvas.DrawText(artist, 20, 250, paint);
 
-        using var image = SKImage.FromBitmap(bitmap);
-        using var data = image.Encode(SKEncodedImageFormat.Png, 100);
-        return Convert.ToBase64String(data.ToArray());
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Cover generation exception: {ex.Message}");
-        return null;
-    }
-}
-
+            using var image = SKImage.FromBitmap(bitmap);
+            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+            return Convert.ToBase64String(data.ToArray());
+        }
     }
 }
