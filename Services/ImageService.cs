@@ -80,19 +80,23 @@ namespace MusicStore.Services
         {
             using var image = new Image<Rgba32>(512, 512);
 
-            // градиентный фон
-            var startColor = Color.DeepSkyBlue;
-            var endColor = Color.MediumVioletRed;
+            int seed = (title + artist).GetHashCode(); 
+            var rng = new Random(seed); 
+            var startColor = Color.FromRgb( 
+                (byte)rng.Next(256), 
+                (byte)rng.Next(256), 
+                (byte)rng.Next(256)); 
+            var endColor = Color.FromRgb( 
+                (byte)rng.Next(256), 
+                (byte)rng.Next(256), 
+                (byte)rng.Next(256));
             image.Mutate(ctx => ctx.Fill(new LinearGradientBrush(
-                new PointF(0, 0),
-                new PointF(512, 512),
-                GradientRepetitionMode.None,
-                new[]
-                {
-            new ColorStop(0, startColor),
-            new ColorStop(1, endColor)
+                new PointF(0, 0), 
+                new PointF(512, 512), 
+                GradientRepetitionMode.None, new[] { 
+                new ColorStop(0, startColor), 
+                    new ColorStop(1, endColor) 
                 })));
-
             // шрифты
             var fontCollection = new FontCollection();
             var family = fontCollection.Add("Resources/dejavu-fonts-ttf-2.37/ttf/DejaVuSans.ttf");
