@@ -14,6 +14,8 @@ namespace MusicStore.Services
         Task<string> GenerateCoverAsync(string title, string artist, string genre);
     }
 
+    // IMPORTANT: Generates album covers using Replicate API.
+    // NOTE: If Replicate fails or rate-limits, a deterministic fallback cover is generated.
     public class ImageService : IImageService
     {
         private readonly HttpClient _client;
@@ -22,16 +24,20 @@ namespace MusicStore.Services
         public ImageService(IConfiguration config)
         {
             _client = new HttpClient();
-            _token = config["REPLICATE_API_TOKEN"];
+            _token = config["REPLICATE_API_TOKEN"] ?? "";
+
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Token", _token);
         }
 
+        // IMPORTANT: Attempts to generate a cover via Replicate.
+        // If the API fails, a fallback cover is generated locally.
         public async Task<string> GenerateCoverAsync(string title, string artist, string genre)
         {
             try
             {
                 var url = "https://api.replicate.com/v1/predictions";
+
                 var payload = new
                 {
                     version = "black-forest-labs/flux-1.1-pro",
@@ -45,7 +51,11 @@ namespace MusicStore.Services
                 };
 
                 var json = JsonSerializer.Serialize(payload);
-                var response = await _client.PostAsync(url, new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+                var response = await _client.PostAsync(
+                    url,
+                    new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+                );
+
                 var body = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
@@ -55,9 +65,12 @@ namespace MusicStore.Services
                 }
 
                 using var doc = JsonDocument.Parse(body);
-                if (doc.RootElement.TryGetProperty("output", out var outputElement) && outputElement.ValueKind == JsonValueKind.Array)
+
+                if (doc.RootElement.TryGetProperty("output", out var outputElement) &&
+                    outputElement.ValueKind == JsonValueKind.Array)
                 {
                     var imageUrl = outputElement[0].GetString();
+
                     if (!string.IsNullOrEmpty(imageUrl))
                     {
                         var imageBytes = await _client.GetByteArrayAsync(imageUrl);
@@ -75,35 +88,47 @@ namespace MusicStore.Services
             }
         }
 
-        // 👉 Fallback: градиент + текст через ImageSharp
+        // IMPORTANT: Generates a deterministic fallback cover using ImageSharp.
+        // NOTE: The same title+artist always produces the same gradient.
         private string GenerateFallbackCover(string title, string artist)
         {
             using var image = new Image<Rgba32>(512, 512);
 
-            int seed = (title + artist).GetHashCode(); 
-            var rng = new Random(seed); 
-            var startColor = Color.FromRgb( 
-                (byte)rng.Next(256), 
-                (byte)rng.Next(256), 
-                (byte)rng.Next(256)); 
-            var endColor = Color.FromRgb( 
-                (byte)rng.Next(256), 
-                (byte)rng.Next(256), 
+            int seed = (title + artist).GetHashCode();
+            var rng = new Random(seed);
+
+            var startColor = Color.FromRgb(
+                (byte)rng.Next(256),
+                (byte)rng.Next(256),
                 (byte)rng.Next(256));
-            image.Mutate(ctx => ctx.Fill(new LinearGradientBrush(
-                new PointF(0, 0), 
-                new PointF(512, 512), 
-                GradientRepetitionMode.None, new[] { 
-                new ColorStop(0, startColor), 
-                    new ColorStop(1, endColor) 
-                })));
-            // шрифты
+
+            var endColor = Color.FromRgb(
+                (byte)rng.Next(256),
+                (byte)rng.Next(256),
+                (byte)rng.Next(256));
+
+            image.Mutate(ctx =>
+            {
+                ctx.Fill(new LinearGradientBrush(
+                    new PointF(0, 0),
+                    new PointF(512, 512),
+                    GradientRepetitionMode.None,
+                    new[]
+                    {
+                        new ColorStop(0, startColor),
+                        new ColorStop(1, endColor)
+                    }
+                ));
+            });
+
+            // IMPORTANT: Load font from resources
             var fontCollection = new FontCollection();
             var family = fontCollection.Add("Resources/dejavu-fonts-ttf-2.37/ttf/DejaVuSans.ttf");
+
             var fontTitle = family.CreateFont(32, FontStyle.Bold);
             var fontArtist = family.CreateFont(24, FontStyle.Regular);
 
-            // текст
+            // IMPORTANT: Draw text
             image.Mutate(ctx =>
             {
                 ctx.DrawText(title, fontTitle, Color.White, new PointF(20, 220));
@@ -112,6 +137,7 @@ namespace MusicStore.Services
 
             using var ms = new MemoryStream();
             image.SaveAsPng(ms);
+
             return $"data:image/png;base64,{Convert.ToBase64String(ms.ToArray())}";
         }
     }
