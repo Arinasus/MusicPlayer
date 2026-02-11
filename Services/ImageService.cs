@@ -95,8 +95,7 @@ namespace MusicStore.Services
 
             // шрифты
             var fontCollection = new FontCollection();
-            fontCollection.AddSystemFonts(); // подключаем системные шрифты
-            var family = fontCollection.Get("Arial"); // ищем Arial
+            var family = fontCollection.Add("Resources/dejavu-fonts-ttf-2.37/ttf/DejaVuSans.ttf");
             var fontTitle = family.CreateFont(32, FontStyle.Bold);
             var fontArtist = family.CreateFont(24, FontStyle.Regular);
 
