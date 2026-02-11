@@ -208,6 +208,61 @@
           }
         }
       },
+      "SkiaSharp.NativeAssets.Linux/3.119.2": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/_._": {}
+        },
+        "runtime": {
+          "lib/net8.0/_._": {}
+        },
+        "runtimeTargets": {
+          "runtimes/linux-arm/native/libSkiaSharp.so": {
+            "assetType": "native",
+            "rid": "linux-arm"
+          },
+          "runtimes/linux-arm64/native/libSkiaSharp.so": {
+            "assetType": "native",
+            "rid": "linux-arm64"
+          },
+          "runtimes/linux-loongarch64/native/libSkiaSharp.so": {
+            "assetType": "native",
+            "rid": "linux-loongarch64"
+          },
+          "runtimes/linux-musl-arm/native/libSkiaSharp.so": {
+            "assetType": "native",
+            "rid": "linux-musl-arm"
+          },
+          "runtimes/linux-musl-arm64/native/libSkiaSharp.so": {
+            "assetType": "native",
+            "rid": "linux-musl-arm64"
+          },
+          "runtimes/linux-musl-loongarch64/native/libSkiaSharp.so": {
+            "assetType": "native",
+            "rid": "linux-musl-loongarch64"
+          },
+          "runtimes/linux-musl-riscv64/native/libSkiaSharp.so": {
+            "assetType": "native",
+            "rid": "linux-musl-riscv64"
+          },
+          "runtimes/linux-musl-x64/native/libSkiaSharp.so": {
+            "assetType": "native",
+            "rid": "linux-musl-x64"
+          },
+          "runtimes/linux-riscv64/native/libSkiaSharp.so": {
+            "assetType": "native",
+            "rid": "linux-riscv64"
+          },
+          "runtimes/linux-x64/native/libSkiaSharp.so": {
+            "assetType": "native",
+            "rid": "linux-x64"
+          },
+          "runtimes/linux-x86/native/libSkiaSharp.so": {
+            "assetType": "native",
+            "rid": "linux-x86"
+          }
+        }
+      },
       "SkiaSharp.NativeAssets.macOS/3.119.2": {
         "type": "package",
         "compile": {
@@ -864,6 +919,39 @@
         "skiasharp.nuspec"
       ]
     },
+    "SkiaSharp.NativeAssets.Linux/3.119.2": {
+      "sha512": "9WzxSyG/s9Id506j0Ht+Bi5ucOpWKPzd1XXr9TD4fuCafHHy2swRSlbZtC3IDQAsvCH63OerkDJajj43uSv5og==",
+      "type": "package",
+      "path": "skiasharp.nativeassets.linux/3.119.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "README.md",
+        "THIRD-PARTY-NOTICES.txt",
+        "build/net462/SkiaSharp.NativeAssets.Linux.targets",
+        "buildTransitive/net462/SkiaSharp.NativeAssets.Linux.targets",
+        "icon.png",
+        "lib/net462/_._",
+        "lib/net6.0/_._",
+        "lib/net8.0/_._",
+        "lib/netstandard2.0/_._",
+        "lib/netstandard2.1/_._",
+        "runtimes/linux-arm/native/libSkiaSharp.so",
+        "runtimes/linux-arm64/native/libSkiaSharp.so",
+        "runtimes/linux-loongarch64/native/libSkiaSharp.so",
+        "runtimes/linux-musl-arm/native/libSkiaSharp.so",
+        "runtimes/linux-musl-arm64/native/libSkiaSharp.so",
+        "runtimes/linux-musl-loongarch64/native/libSkiaSharp.so",
+        "runtimes/linux-musl-riscv64/native/libSkiaSharp.so",
+        "runtimes/linux-musl-x64/native/libSkiaSharp.so",
+        "runtimes/linux-riscv64/native/libSkiaSharp.so",
+        "runtimes/linux-x64/native/libSkiaSharp.so",
+        "runtimes/linux-x86/native/libSkiaSharp.so",
+        "skiasharp.nativeassets.linux.3.119.2.nupkg.sha512",
+        "skiasharp.nativeassets.linux.nuspec"
+      ]
+    },
     "SkiaSharp.NativeAssets.macOS/3.119.2": {
       "sha512": "I2jMGQ/26KOnc6iAoR+Mxh9vSJJ2vioJyj9aJ9OL5yEZyXothXJxf4vBMqnSaiXMqiiU1scG7KqtT0CLkmMmWA==",
       "type": "package",
@@ -1128,6 +1216,7 @@
       "NAudio >= 2.2.1",
       "NAudio.Lame >= 2.1.0",
       "SkiaSharp >= 3.119.2",
+      "SkiaSharp.NativeAssets.Linux >= 3.119.2",
       "Swashbuckle.AspNetCore >= 6.6.2"
     ]
   },
@@ -1195,6 +1284,10 @@
             "version": "[2.1.0, )"
           },
           "SkiaSharp": {
+            "target": "Package",
+            "version": "[3.119.2, )"
+          },
+          "SkiaSharp.NativeAssets.Linux": {
             "target": "Package",
             "version": "[3.119.2, )"
           },

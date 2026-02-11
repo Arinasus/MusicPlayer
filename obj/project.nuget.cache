@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "i8+Z+HVBqjc=",
+  "dgSpecHash": "JiKUJ2i+4Kg=",
   "success": true,
   "projectFilePath": "D:\\Курсы\\MusicPlayer\\MusicStore.csproj",
   "expectedPackageFiles": [
@@ -17,6 +17,7 @@
     "C:\\Users\\HP\\.nuget\\packages\\naudio.wasapi\\2.2.1\\naudio.wasapi.2.2.1.nupkg.sha512",
     "C:\\Users\\HP\\.nuget\\packages\\naudio.winmm\\2.2.1\\naudio.winmm.2.2.1.nupkg.sha512",
     "C:\\Users\\HP\\.nuget\\packages\\skiasharp\\3.119.2\\skiasharp.3.119.2.nupkg.sha512",
+    "C:\\Users\\HP\\.nuget\\packages\\skiasharp.nativeassets.linux\\3.119.2\\skiasharp.nativeassets.linux.3.119.2.nupkg.sha512",
     "C:\\Users\\HP\\.nuget\\packages\\skiasharp.nativeassets.macos\\3.119.2\\skiasharp.nativeassets.macos.3.119.2.nupkg.sha512",
     "C:\\Users\\HP\\.nuget\\packages\\skiasharp.nativeassets.win32\\3.119.2\\skiasharp.nativeassets.win32.3.119.2.nupkg.sha512",
     "C:\\Users\\HP\\.nuget\\packages\\swashbuckle.aspnetcore\\6.6.2\\swashbuckle.aspnetcore.6.6.2.nupkg.sha512",
