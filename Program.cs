@@ -7,7 +7,7 @@ builder.Services.AddHttpClient();
 
 builder.Services.AddCors(options => { 
     options.AddPolicy("AllowFrontend", policy => policy 
-    .WithOrigins("https://music-store-orcin.vercel.app") /
+    .WithOrigins("https://music-store-orcin.vercel.app") 
  .AllowAnyHeader() 
  .AllowAnyMethod()); });
 var app = builder.Build();
