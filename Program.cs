@@ -1,3 +1,6 @@
+using MusicStore.Models;
+using MusicStore.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
