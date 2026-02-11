@@ -1,34 +1,37 @@
 ﻿using MusicStore.Models;
 using Bogus;
-using SkiaSharp;
 using System.Text.Json;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 
 namespace MusicStore.Services
 {
     public static class SongGenerator
     {
         private static readonly string[] SupportedLocales = { "en", "de", "uk" };
+
+        // Набор нот для простого генератора мелодий
         private static readonly string[] NoteSet = { "C4", "D4", "E4", "F4", "G4", "A4", "B4" };
 
-        // Загружаем отзывы один раз при старте
+        // Отзывы загружаем один раз
         private static readonly Dictionary<string, string[]> Reviews = LoadReviews();
 
         private static Dictionary<string, string[]> LoadReviews()
         {
             var path = Path.Combine(AppContext.BaseDirectory, "Data", "reviews.json");
             var json = File.ReadAllText(path);
+
             return JsonSerializer.Deserialize<Dictionary<string, string[]>>(json)
                    ?? new Dictionary<string, string[]>();
         }
 
+        /// <summary>
+        /// Генерация списка песен.
+        /// ВАЖНО: titles / artists / albums / genres / notes зависят только от seed + page + index + lang.
+        /// Likes зависят только от avgLikes + seed + index.
+        /// </summary>
         public static async Task<List<Song>> GenerateSong(int page, string lang, long seed, double avgLikes, int count = 10)
         {
             var dataSeed = (int)(seed ^ page);
             Randomizer.Seed = new Random(dataSeed);
-            var rng = new Random(dataSeed);
 
             var locale = SupportedLocales.Contains(lang) ? lang : "en";
 
@@ -41,6 +44,7 @@ namespace MusicStore.Services
             {
                 var path = Path.Combine(AppContext.BaseDirectory, "Resources", $"{locale}.json");
                 var json = File.ReadAllText(path);
+
                 var options = new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
@@ -48,7 +52,6 @@ namespace MusicStore.Services
 
                 dict = JsonSerializer.Deserialize<LocaleData>(json, options)
                        ?? throw new Exception($"Locale file {locale}.json is invalid");
-
             }
 
             var songs = new List<Song>();
@@ -57,6 +60,14 @@ namespace MusicStore.Services
             {
                 int index = (page - 1) * count + i;
 
+                // Отдельные RNG для разных аспектов, чтобы поведение было стабильным и предсказуемым
+                var rngTitle = new Random((int)(seed ^ page ^ index ^ 101));
+                var rngArtist = new Random((int)(seed ^ page ^ index ^ 202));
+                var rngAlbum = new Random((int)(seed ^ page ^ index ^ 303));
+                var rngGenre = new Random((int)(seed ^ page ^ index ^ 404));
+                var rngNotes = new Random((int)(seed ^ page ^ index ^ 505));
+                var rngReview = new Random((int)(seed ^ page ^ index ^ 606));
+
                 string title;
                 string artist;
                 string album;
@@ -64,37 +75,44 @@ namespace MusicStore.Services
 
                 if (locale == "en")
                 {
-                    // Полностью Bogus
+                    // Полностью Bogus для английского
                     title = faker.Commerce.ProductName();
-                    artist = rng.NextDouble() > 0.5 ? faker.Name.FullName() : faker.Company.CompanyName();
-                    album = rng.NextDouble() > 0.5 ? faker.Commerce.ProductName() : "Single";
+                    artist = rngArtist.NextDouble() > 0.5
+                        ? faker.Name.FullName()
+                        : faker.Company.CompanyName();
+                    album = rngAlbum.NextDouble() > 0.5
+                        ? faker.Commerce.ProductName()
+                        : "Single";
                     genre = faker.Music.Genre();
                 }
                 else
                 {
-                    // Локализованные словари
-                    title = GenerateTitle(dict!, rng);
-                    artist = GenerateArtist(dict!, rng);
-                    album = rng.NextDouble() > 0.5 ? GenerateAlbum(dict!, rng) : "Single";
+                    // Локализованные словари для DE/UK
+                    title = GenerateTitle(dict!, rngTitle);
+                    artist = GenerateArtist(dict!, rngArtist);
+                    album = rngAlbum.NextDouble() > 0.5
+                        ? GenerateAlbum(dict!, rngAlbum)
+                        : "Single";
 
-                    // жанры можно оставить от Bogus — они универсальны
-                    genre = faker.Music.Genre();
+                    // Жанр тоже локализованный
+                    genre = dict!.Genres[rngGenre.Next(dict.Genres.Length)];
                 }
 
-                // Likes — детерминированно
-                var rngLikes = new Random((int)(seed ^ (page * 1000 + i)));
-                int likes = GenerateLikes(rngLikes, avgLikes);
+                // Likes — зависят только от avgLikes + seed + index
+                int likes = GenerateLikes(avgLikes, seed, index);
 
-                // Notes — детерминированно
-                var rngNotes = new Random((int)(seed ^ (page * 2000 + i)));
+                // Notes — детерминированно от seed + page + index
                 var notes = new List<string>();
                 for (int n = 0; n < 8; n++)
+                {
                     notes.Add(NoteSet[rngNotes.Next(NoteSet.Length)]);
+                }
 
+                // Простейшая длительность: по 0.5 секунды на ноту
                 int duration = (int)(notes.Count * 0.5);
 
                 // Reviews — локализованные
-                var review = GetRandomReview(locale, rng);
+                var review = GetRandomReview(locale, rngReview);
 
                 songs.Add(new Song
                 {
@@ -112,15 +130,21 @@ namespace MusicStore.Services
                 });
             }
 
-            return songs;
+            // async-совместимость, если вызывается через await
+            return await Task.FromResult(songs);
         }
 
-
-
-        private static int GenerateLikes(Random rng, double avg)
+        /// <summary>
+        /// Генерация лайков: дробное значение реализовано вероятностно.
+        /// Не зависит от lang, page, только от avgLikes + seed + index.
+        /// </summary>
+        private static int GenerateLikes(double avgLikes, long seed, int index)
         {
-            int baseLikes = (int)Math.Floor(avg);
-            double prob = avg - baseLikes;
+            var rng = new Random((int)(seed ^ index ^ 9999));
+
+            int baseLikes = (int)Math.Floor(avgLikes);
+            double prob = avgLikes - baseLikes;
+
             return baseLikes + (rng.NextDouble() < prob ? 1 : 0);
         }
 
@@ -130,76 +154,6 @@ namespace MusicStore.Services
             return reviewSet[rng.Next(reviewSet.Length)];
         }
 
-        private static async Task<string?> GenerateCoverImage(string title, string artist, string genre, long seed)
-{
-    var token = Environment.GetEnvironmentVariable("REPLICATE_API_TOKEN");
-    if (string.IsNullOrEmpty(token))
-    {
-        Console.WriteLine("REPLICATE_API_TOKEN is not set!");
-        return GenerateEmptyPng();
-    }
-
-    using var client = new HttpClient();
-    client.DefaultRequestHeaders.Authorization =
-        new System.Net.Http.Headers.AuthenticationHeaderValue("Token", token);
-
-    var url = "https://api.replicate.com/v1/predictions";
-
-    var payload = new
-    {
-        version = "black-forest-labs/flux-1.1-pro",
-        input = new
-        {
-            prompt = $"{genre} abstract album cover background, {title} by {artist}",
-            aspect_ratio = "1:1",
-            output_format = "png",
-            output_quality = 80
-        }
-    };
-
-    var json = JsonSerializer.Serialize(payload);
-    var response = await client.PostAsync(url, new StringContent(json, Encoding.UTF8, "application/json"));
-
-    if (!response.IsSuccessStatusCode)
-    {
-        var errorJson = await response.Content.ReadAsStringAsync();
-        Console.WriteLine($"Replicate API failed: {response.StatusCode}, body: {errorJson}");
-        return GenerateEmptyPng();
-    }
-
-    var resultJson = await response.Content.ReadAsStringAsync();
-    using var doc = JsonDocument.Parse(resultJson);
-
-    if (doc.RootElement.TryGetProperty("output", out var outputElement) && outputElement.ValueKind == JsonValueKind.Array)
-    {
-        var imageUrl = outputElement[0].GetString();
-        if (!string.IsNullOrEmpty(imageUrl))
-        {
-            try
-            {
-                var imageBytes = await client.GetByteArrayAsync(imageUrl);
-                return Convert.ToBase64String(imageBytes);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Cover generation exception: {ex.Message}");
-                return GenerateEmptyPng();
-            }
-        }
-    }
-
-    Console.WriteLine("Replicate API did not return an image URL.");
-    return GenerateEmptyPng();
-}
-
-private static string GenerateEmptyPng()
-{
-    // Минимальный PNG в base64 (1x1 прозрачный пиксель)
-    // Это стандартный заглушечный PNG
-    const string emptyPngBase64 =
-        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+X2XcAAAAASUVORK5CYII=";
-    return emptyPngBase64;
-}
         private static string GenerateTitle(LocaleData dict, Random rng)
         {
             var w1 = dict.TitleWords[rng.Next(dict.TitleWords.Length)];
@@ -229,7 +183,5 @@ private static string GenerateEmptyPng()
                 return $"{w1} {w2}";
             }
         }
-
-
     }
 }
