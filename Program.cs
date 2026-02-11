@@ -4,6 +4,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
+builder.Services.AddSingleton<ISongRepository, InMemorySongRepository>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 builder.Services.AddCors(options => { 
     options.AddPolicy("AllowFrontend", policy => policy 
