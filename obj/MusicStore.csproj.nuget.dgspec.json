@@ -63,6 +63,10 @@
               "target": "Package",
               "version": "[2.1.0, )"
             },
+            "SixLabors.ImageSharp.Drawing": {
+              "target": "Package",
+              "version": "[2.1.7, )"
+            },
             "SkiaSharp": {
               "target": "Package",
               "version": "[3.119.2, )"

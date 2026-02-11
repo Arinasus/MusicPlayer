@@ -1,5 +1,8 @@
-﻿using System.Drawing;
-using System.Drawing.Imaging;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.Fonts;
 using System.Text.Json;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -72,28 +75,40 @@ namespace MusicStore.Services
             }
         }
 
-        // 👉 Fallback: градиент + текст через System.Drawing.Common
+        // 👉 Fallback: градиент + текст через ImageSharp
         private string GenerateFallbackCover(string title, string artist)
         {
-            using var bmp = new Bitmap(512, 512);
-            using var g = Graphics.FromImage(bmp);
+            using var image = new Image<Rgba32>(512, 512);
 
             // градиентный фон
-            using var brush = new System.Drawing.Drawing2D.LinearGradientBrush(
-                new Rectangle(0, 0, 512, 512),
-                Color.DeepSkyBlue,
-                Color.MediumVioletRed,
-                45f);
-            g.FillRectangle(brush, 0, 0, 512, 512);
+            var startColor = Color.DeepSkyBlue;
+            var endColor = Color.MediumVioletRed;
+            image.Mutate(ctx => ctx.Fill(new LinearGradientBrush(
+                new PointF(0, 0),
+                new PointF(512, 512),
+                GradientRepetitionMode.None,
+                new[]
+                {
+            new ColorStop(0, startColor),
+            new ColorStop(1, endColor)
+                })));
 
-            // текст альбома
-            using var fontTitle = new Font("Arial", 32, FontStyle.Bold);
-            using var fontArtist = new Font("Arial", 24, FontStyle.Regular);
-            g.DrawString(title, fontTitle, Brushes.White, new PointF(20, 220));
-            g.DrawString(artist, fontArtist, Brushes.White, new PointF(20, 270));
+            // шрифты
+            var fontCollection = new FontCollection();
+            fontCollection.AddSystemFonts(); // подключаем системные шрифты
+            var family = fontCollection.Get("Arial"); // ищем Arial
+            var fontTitle = family.CreateFont(32, FontStyle.Bold);
+            var fontArtist = family.CreateFont(24, FontStyle.Regular);
+
+            // текст
+            image.Mutate(ctx =>
+            {
+                ctx.DrawText(title, fontTitle, Color.White, new PointF(20, 220));
+                ctx.DrawText(artist, fontArtist, Color.White, new PointF(20, 270));
+            });
 
             using var ms = new MemoryStream();
-            bmp.Save(ms, ImageFormat.Png);
+            image.SaveAsPng(ms);
             return $"data:image/png;base64,{Convert.ToBase64String(ms.ToArray())}";
         }
     }
