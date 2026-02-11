@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MusicStore.Models;
 using MusicStore.Services;
-using NAudio.Lame;
 using NAudio.Wave;
 using System.IO.Compression;
 
@@ -38,8 +37,7 @@ namespace MusicStore.Controllers
             return Ok(songs);
         }
 
-        // IMPORTANT: Returns MP3 audio for a specific song.
-        // IMPORTANT: Audio must be deterministic and generated on demand.
+        // IMPORTANT: Returns WAV audio for a specific song.
         [HttpGet("{id}/audio")]
         public async Task<IActionResult> GetAudio(int id)
         {
@@ -47,14 +45,11 @@ namespace MusicStore.Controllers
             if (song == null)
                 return NotFound();
 
-            var ms = new MemoryStream();
-            GenerateSongAudioMp3(song, ms);
-            ms.Position = 0;
-
-            return File(ms, "audio/mpeg");
+            var bytes = GenerateSongAudioWav(song);
+            return File(bytes, "audio/wav");
         }
 
-        // IMPORTANT: Export ZIP containing MP3 files.
+        // IMPORTANT: Export ZIP containing WAV files.
         [HttpPost("exportZip")]
         public async Task<IActionResult> ExportZip([FromBody] ExportRequest req)
         {
@@ -65,7 +60,7 @@ namespace MusicStore.Controllers
                 req.Likes,
                 req.Count);
 
-            var ms = new MemoryStream();
+            using var ms = new MemoryStream();
 
             using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true))
             {
@@ -75,19 +70,14 @@ namespace MusicStore.Controllers
                     foreach (var c in Path.GetInvalidFileNameChars())
                         safeName = safeName.Replace(c, '_');
 
-                    var entry = archive.CreateEntry($"{safeName}.mp3");
+                    var entry = archive.CreateEntry($"{safeName}.wav");
 
                     using var entryStream = entry.Open();
-                    using var audioStream = new MemoryStream();
-
-                    GenerateSongAudioMp3(song, audioStream);
-                    audioStream.Position = 0;
-
-                    audioStream.CopyTo(entryStream);
+                    var audioBytes = GenerateSongAudioWav(song);
+                    entryStream.Write(audioBytes, 0, audioBytes.Length);
                 }
             }
 
-            ms.Position = 0;
             return File(ms.ToArray(), "application/zip", "songs.zip");
         }
 
@@ -118,18 +108,14 @@ namespace MusicStore.Controllers
             return Ok(new { cover = coverUrl });
         }
 
-        // IMPORTANT: Generates MP3 audio using NAudio + LAME encoder.
-        // IMPORTANT: All streams must be left open to avoid ObjectDisposedException.
-        private static void GenerateSongAudioMp3(Song song, Stream output)
+        // IMPORTANT: Generates deterministic WAV audio for a song.
+        private static byte[] GenerateSongAudioWav(Song song)
         {
             int sampleRate = 44100;
             double noteDuration = 0.5;
 
-            // Step 1: Generate PCM WAV in memory
-            var pcmStream = new MemoryStream();
-            var waveFormat = new WaveFormat(sampleRate, 1);
-
-            using (var writer = new WaveFileWriter(pcmStream, waveFormat))
+            using var ms = new MemoryStream();
+            using (var writer = new WaveFileWriter(ms, new WaveFormat(sampleRate, 1)))
             {
                 if (song.Notes == null || song.Notes.Count == 0)
                     song.Notes = new List<string> { "C4", "E4", "G4" };
@@ -148,19 +134,8 @@ namespace MusicStore.Controllers
                 }
             }
 
-            // IMPORTANT: reset PCM stream position
-            pcmStream.Position = 0;
-
-            // Step 2: Encode WAV → MP3
-            using (var reader = new WaveFileReader(pcmStream))
-            using (var mp3Writer = new LameMP3FileWriter(output, reader.WaveFormat, 128))
-            {
-                reader.CopyTo(mp3Writer);
-            }
-
-            // IMPORTANT: DO NOT dispose output stream
+            return ms.ToArray();
         }
-
 
         private static readonly Dictionary<string, double> NoteFrequencies = new()
         {
