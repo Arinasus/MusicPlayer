@@ -84,6 +84,18 @@ namespace MusicStore.Controllers
             public double Likes { get; set; } = 3.7;
             public int Count { get; set; } = 10;
         }
+        [HttpGet("{id}/audio")]
+public async Task<IActionResult> GetAudio(int id)
+{
+    var song = await _repo.GetByIdAsync(id);
+    if (song == null) return NotFound();
+
+    var ms = new MemoryStream();
+    GenerateSongAudio(song, ms);
+    ms.Position = 0;
+
+    return File(ms, "audio/wav");
+}
 
         [HttpGet("{id}/cover")]
         public async Task<IActionResult> GetCover(int id)
