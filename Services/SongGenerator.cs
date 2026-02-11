@@ -10,7 +10,7 @@ namespace MusicStore.Services
 {
     public static class SongGenerator
     {
-        private static readonly string[] SupportedLocales = { "en_US", "de_DE", "uk_UA" };
+        private static readonly string[] SupportedLocales = { "en", "de", "uk" };
         private static readonly string[] NoteSet = { "C4", "D4", "E4", "F4", "G4", "A4", "B4" };
 
         // Загружаем отзывы один раз при старте
@@ -30,7 +30,7 @@ namespace MusicStore.Services
     Randomizer.Seed = new Random(dataSeed);
     var rngData = new Random(dataSeed);
 
-    var locale = SupportedLocales.Contains(lang) ? lang : "en_US";
+    var locale = SupportedLocales.Contains(lang) ? lang : "en";
     var faker = new Faker(locale);
 
     var songs = new List<Song>();
@@ -89,7 +89,7 @@ namespace MusicStore.Services
 
         private static string GetRandomReview(string locale, Random rng)
         {
-            var reviewSet = Reviews.ContainsKey(locale) ? Reviews[locale] : Reviews["en_US"];
+            var reviewSet = Reviews.ContainsKey(locale) ? Reviews[locale] : Reviews["en"];
             return reviewSet[rng.Next(reviewSet.Length)];
         }
 

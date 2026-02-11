@@ -23,7 +23,7 @@ namespace MusicStore.Controllers
         [HttpGet]
         public async Task<IActionResult> GetSongs(
             int page = 1,
-            string lang = "en_US",
+            string lang = "en",
             long seed = 12345,
             double likes = 3.7,
             int count = 10
@@ -74,7 +74,7 @@ namespace MusicStore.Controllers
         public class ExportRequest
         {
             public int Page { get; set; }
-            public string Lang { get; set; } = "en_US";
+            public string Lang { get; set; } = "en";
             public long Seed { get; set; } = 12345;
             public double Likes { get; set; } = 3.7;
             public int Count { get; set; } = 10;
