@@ -21,7 +21,6 @@ namespace MusicStore.Controllers
         }
 
         // IMPORTANT: Returns a generated batch of songs.
-        // IMPORTANT: Songs must be reproducible based on seed + page + index.
         // IMPORTANT: Only metadata is cached; audio is generated on demand.
         [HttpGet]
         public async Task<IActionResult> GetSongs(
@@ -34,7 +33,7 @@ namespace MusicStore.Controllers
             var songs = await SongGenerator.GenerateSong(page, lang, seed, likes, count);
 
             foreach (var song in songs)
-                await _repo.UpdateAsync(song); // cache metadata only
+                await _repo.UpdateAsync(song);
 
             return Ok(songs);
         }
@@ -56,7 +55,6 @@ namespace MusicStore.Controllers
         }
 
         // IMPORTANT: Export ZIP containing MP3 files.
-        // IMPORTANT: File names must include title + album + artist.
         [HttpPost("exportZip")]
         public async Task<IActionResult> ExportZip([FromBody] ExportRequest req)
         {
@@ -121,13 +119,17 @@ namespace MusicStore.Controllers
         }
 
         // IMPORTANT: Generates MP3 audio using NAudio + LAME encoder.
+        // IMPORTANT: All streams must be left open to avoid ObjectDisposedException.
         private static void GenerateSongAudioMp3(Song song, Stream output)
         {
             int sampleRate = 44100;
             double noteDuration = 0.5;
 
-            using var pcmStream = new MemoryStream();
-            using (var writer = new WaveFileWriter(pcmStream, new WaveFormat(sampleRate, 1)))
+            // Step 1: Generate PCM WAV in memory
+            var pcmStream = new MemoryStream();
+            var waveFormat = new WaveFormat(sampleRate, 1);
+
+            using (var writer = new WaveFileWriter(pcmStream, waveFormat))
             {
                 if (song.Notes == null || song.Notes.Count == 0)
                     song.Notes = new List<string> { "C4", "E4", "G4" };
@@ -146,12 +148,19 @@ namespace MusicStore.Controllers
                 }
             }
 
+            // IMPORTANT: reset PCM stream position
             pcmStream.Position = 0;
 
-            using var reader = new WaveFileReader(pcmStream);
-            using var mp3Writer = new LameMP3FileWriter(output, reader.WaveFormat, 128);
-            reader.CopyTo(mp3Writer);
+            // Step 2: Encode WAV → MP3
+            using (var reader = new WaveFileReader(pcmStream))
+            using (var mp3Writer = new LameMP3FileWriter(output, reader.WaveFormat, 128))
+            {
+                reader.CopyTo(mp3Writer);
+            }
+
+            // IMPORTANT: DO NOT dispose output stream
         }
+
 
         private static readonly Dictionary<string, double> NoteFrequencies = new()
         {
