@@ -7,8 +7,28 @@
       "RelativeMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|solutionrelative:services\\songgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicplayer\\models\\inmemorysongrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|solutionrelative:models\\inmemorysongrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicplayer\\models\\isongrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|solutionrelative:models\\isongrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicplayer\\models\\localedata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|solutionrelative:models\\localedata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicplayer\\resources\\uk.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|solutionrelative:resources\\uk.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicplayer\\resources\\de_words.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|solutionrelative:resources\\de_words.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicplayer\\resources\\de.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|solutionrelative:resources\\de.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{34B9793D-38F9-8892-85E6-394EBE8729DF}|MusicStore.csproj|d:\\\u043A\u0443\u0440\u0441\u044B\\musicplayer\\controllers\\songscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -55,14 +75,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "LocaleData.cs",
-              "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Models\\LocaleData.cs",
-              "RelativeDocumentMoniker": "Models\\LocaleData.cs",
-              "ToolTip": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Models\\LocaleData.cs",
-              "RelativeToolTip": "Models\\LocaleData.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAFAAAAAAAAAA==",
+              "Title": "InMemorySongRepository.cs",
+              "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Models\\InMemorySongRepository.cs",
+              "RelativeDocumentMoniker": "Models\\InMemorySongRepository.cs",
+              "ToolTip": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Models\\InMemorySongRepository.cs",
+              "RelativeToolTip": "Models\\InMemorySongRepository.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAYwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-11T15:16:02.577Z",
+              "WhenOpened": "2026-02-11T15:39:27.984Z",
               "EditorCaption": ""
             },
             {
@@ -73,7 +93,7 @@
               "RelativeDocumentMoniker": "Services\\SongGenerator.cs",
               "ToolTip": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Services\\SongGenerator.cs",
               "RelativeToolTip": "Services\\SongGenerator.cs",
-              "ViewState": "AgIAABYAAAAAAAAAAAAQwCkAAABhAAAAAAAAAA==",
+              "ViewState": "AgIAABcAAAAAAAAAAAAgwCQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-02-10T17:05:19.417Z",
               "EditorCaption": ""
@@ -81,6 +101,71 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "ISongRepository.cs",
+              "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Models\\ISongRepository.cs",
+              "RelativeDocumentMoniker": "Models\\ISongRepository.cs",
+              "ToolTip": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Models\\ISongRepository.cs",
+              "RelativeToolTip": "Models\\ISongRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-11T15:39:26.75Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "uk.json",
+              "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Resources\\uk.json",
+              "RelativeDocumentMoniker": "Resources\\uk.json",
+              "ToolTip": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Resources\\uk.json",
+              "RelativeToolTip": "Resources\\uk.json",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAAwBwAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-02-11T15:35:14.108Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "de_words.txt",
+              "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Resources\\de_words.txt",
+              "RelativeDocumentMoniker": "Resources\\de_words.txt",
+              "ToolTip": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Resources\\de_words.txt",
+              "RelativeToolTip": "Resources\\de_words.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2026-02-11T15:35:09.83Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "de.json",
+              "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Resources\\de.json",
+              "RelativeDocumentMoniker": "Resources\\de.json",
+              "ToolTip": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Resources\\de.json",
+              "RelativeToolTip": "Resources\\de.json",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAAwCEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-02-11T15:35:00.152Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "LocaleData.cs",
+              "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Models\\LocaleData.cs",
+              "RelativeDocumentMoniker": "Models\\LocaleData.cs",
+              "ToolTip": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Models\\LocaleData.cs",
+              "RelativeToolTip": "Models\\LocaleData.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-11T15:16:02.577Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "SongsController.cs",
               "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Controllers\\SongsController.cs",
               "RelativeDocumentMoniker": "Controllers\\SongsController.cs",
@@ -92,7 +177,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 8,
               "Title": "MusicStore.csproj",
               "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\MusicStore.csproj",
               "RelativeDocumentMoniker": "MusicStore.csproj",
@@ -104,7 +189,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 9,
               "Title": "ImageService.cs",
               "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Services\\ImageService.cs",
               "RelativeDocumentMoniker": "Services\\ImageService.cs",
@@ -116,7 +201,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 10,
               "Title": "Dockerfile",
               "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Dockerfile",
               "RelativeDocumentMoniker": "Dockerfile",
@@ -128,7 +213,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 11,
               "Title": "MusicStore",
               "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\MusicStore.csproj",
               "RelativeDocumentMoniker": "MusicStore.csproj",
@@ -139,7 +224,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 12,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\\u041A\u0443\u0440\u0441\u044B\\MusicPlayer\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",

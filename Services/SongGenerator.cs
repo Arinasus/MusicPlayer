@@ -41,7 +41,14 @@ namespace MusicStore.Services
             {
                 var path = Path.Combine(AppContext.BaseDirectory, "Resources", $"{locale}.json");
                 var json = File.ReadAllText(path);
-                dict = JsonSerializer.Deserialize<LocaleData>(json);
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                dict = JsonSerializer.Deserialize<LocaleData>(json, options)
+                       ?? throw new Exception($"Locale file {locale}.json is invalid");
+
             }
 
             var songs = new List<Song>();
