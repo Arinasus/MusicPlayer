@@ -36,6 +36,7 @@ namespace MusicStore.Controllers
                 using var ms = new MemoryStream();
                 GenerateSongAudio(song, ms);
                 song.AudioPreview = ms.ToArray();
+                await _repo.UpdateAsync(song);
             }
 
             return Ok(songs);
