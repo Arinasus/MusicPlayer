@@ -47,7 +47,8 @@ namespace MusicStore.Controllers
         {
             var songs = await SongGenerator.GenerateSong(req.Page, req.Lang, req.Seed, req.Likes, req.Count);
 
-            using var ms = new MemoryStream();
+            var ms = new MemoryStream(); // НЕ using!
+
             using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true))
             {
                 foreach (var song in songs)
@@ -56,20 +57,22 @@ namespace MusicStore.Controllers
                     foreach (var c in Path.GetInvalidFileNameChars())
                         safeName = safeName.Replace(c, '_');
 
-                    var entryName = $"{safeName}.wav";
-                    var entry = archive.CreateEntry(entryName);
-                    using var entryStream = entry.Open();
+                    var entry = archive.CreateEntry($"{safeName}.wav");
 
-                    using var waveOut = new MemoryStream();
-                    GenerateSongAudio(song, waveOut);
-                    waveOut.Position = 0;
-                    waveOut.CopyTo(entryStream);
+                    using var entryStream = entry.Open();
+                    using var audioStream = new MemoryStream();
+
+                    GenerateSongAudio(song, audioStream);
+                    audioStream.Position = 0;
+
+                    audioStream.CopyTo(entryStream);
                 }
             }
 
             ms.Position = 0;
-            return File(ms.ToArray(), "application/zip", "songs.zip");
+            return File(ms, "application/zip", "songs.zip");
         }
+
 
         public class ExportRequest
         {
