@@ -1,5 +1,6 @@
 ﻿namespace MusicStore.Models
 {
+    // IMPORTANT: Locale-specific word lists used for generating titles, artists, albums, and genres.
     public class LocaleData
     {
         public string[] TitleWords { get; set; } = Array.Empty<string>(); 

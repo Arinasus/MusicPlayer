@@ -2,26 +2,11 @@
 
 namespace MusicStore.Services
 {
+    // IMPORTANT: Simple in-memory repository used only for caching metadata.
+    // NOTE: This is NOT a persistent database. Data resets on application restart.
     public class InMemorySongRepository : ISongRepository
     {
         private readonly List<Song> _songs = new();
-
-        public InMemorySongRepository()
-        {
-            // Можно добавить тестовые песни
-            _songs.Add(new Song
-            {
-                Index = 1,
-                Title = "Test Song",
-                Artist = "Demo Artist",
-                Album = "Demo Album",
-                Genre = "Pop",
-                Likes = 5,
-                Notes = new List<string> { "C4", "E4", "G4" },
-                Duration = 3,
-                Review = "Nice demo track"
-            });
-        }
 
         public Task<Song?> GetByIdAsync(int id)
         {
@@ -32,9 +17,10 @@ namespace MusicStore.Services
         public Task UpdateAsync(Song song)
         {
             var existing = _songs.FirstOrDefault(s => s.Index == song.Index);
+
             if (existing != null)
             {
-                // Обновляем поля
+                // IMPORTANT: Update metadata only
                 existing.Title = song.Title;
                 existing.Artist = song.Artist;
                 existing.Album = song.Album;
@@ -44,8 +30,6 @@ namespace MusicStore.Services
                 existing.Duration = song.Duration;
                 existing.Review = song.Review;
                 existing.CoverImageUrl = song.CoverImageUrl;
-                existing.CoverImageBase64 = song.CoverImageBase64;
-                existing.AudioPreview = song.AudioPreview;
             }
             else
             {
