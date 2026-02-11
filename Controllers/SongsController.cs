@@ -13,7 +13,6 @@ namespace MusicStore.Controllers
         private readonly ISongRepository _repo;
         private readonly IImageService _imageService;
 
-        // Внедрение зависимостей через конструктор
         public SongsController(ISongRepository repo, IImageService imageService)
         {
             _repo = repo;
@@ -31,11 +30,9 @@ namespace MusicStore.Controllers
         {
             var songs = await SongGenerator.GenerateSong(page, lang, seed, likes, count);
 
+            // Храним только метаданные в памяти, без аудио
             foreach (var song in songs)
             {
-                using var ms = new MemoryStream();
-                GenerateSongAudio(song, ms);
-                song.AudioPreview = ms.ToArray();
                 await _repo.UpdateAsync(song);
             }
 
@@ -45,9 +42,15 @@ namespace MusicStore.Controllers
         [HttpPost("exportZip")]
         public async Task<IActionResult> ExportZip([FromBody] ExportRequest req)
         {
-            var songs = await SongGenerator.GenerateSong(req.Page, req.Lang, req.Seed, req.Likes, req.Count);
+            var songs = await SongGenerator.GenerateSong(
+                req.Page,
+                req.Lang,
+                req.Seed,
+                req.Likes,
+                req.Count
+            );
 
-            var ms = new MemoryStream(); // НЕ using!
+            var ms = new MemoryStream(); // НЕ using — ASP.NET сам закроет
 
             using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true))
             {
@@ -70,9 +73,8 @@ namespace MusicStore.Controllers
             }
 
             ms.Position = 0;
-            return File(ms, "application/zip", "songs.zip");
+            return File(ms.ToArray(), "application/zip", "songs.zip");
         }
-
 
         public class ExportRequest
         {
@@ -102,7 +104,8 @@ namespace MusicStore.Controllers
         private static void GenerateSongAudio(Song song, Stream output)
         {
             int sampleRate = 44100;
-            using var writer = new WaveFileWriter(output, new WaveFormat(sampleRate, 1));
+            // ВАЖНО: не оборачиваем writer в using, чтобы не закрыть output
+            var writer = new WaveFileWriter(output, new WaveFormat(sampleRate, 1));
             double noteDuration = 0.5;
 
             if (song.Notes == null || song.Notes.Count == 0)
@@ -121,6 +124,8 @@ namespace MusicStore.Controllers
                     writer.Write(buffer, 0, buffer.Length);
                 }
             }
+
+            writer.Flush();
         }
 
         private static readonly Dictionary<string, double> NoteFrequencies = new()
