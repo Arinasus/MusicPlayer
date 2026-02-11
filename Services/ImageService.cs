@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
 using System.Text.Json;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -71,43 +72,29 @@ namespace MusicStore.Services
             }
         }
 
-        // 👉 Fallback: градиент + текст
+        // 👉 Fallback: градиент + текст через System.Drawing.Common
         private string GenerateFallbackCover(string title, string artist)
         {
-            using var bitmap = new SKBitmap(512, 512);
-            using var canvas = new SKCanvas(bitmap);
+            using var bmp = new Bitmap(512, 512);
+            using var g = Graphics.FromImage(bmp);
 
             // градиентный фон
-            var paint = new SKPaint
-            {
-                Shader = SKShader.CreateLinearGradient(
-                    new SKPoint(0, 0),
-                    new SKPoint(512, 512),
-                    new[] { SKColors.DeepSkyBlue, SKColors.MediumVioletRed },
-                    null,
-                    SKShaderTileMode.Clamp)
-            };
-            canvas.DrawRect(new SKRect(0, 0, 512, 512), paint);
+            using var brush = new System.Drawing.Drawing2D.LinearGradientBrush(
+                new Rectangle(0, 0, 512, 512),
+                Color.DeepSkyBlue,
+                Color.MediumVioletRed,
+                45f);
+            g.FillRectangle(brush, 0, 0, 512, 512);
 
             // текст альбома
-            var textPaint = new SKPaint
-            {
-                Color = SKColors.White,
-                TextSize = 32,
-                IsAntialias = true,
-                Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold)
-            };
-            canvas.DrawText(title, 20, 220, textPaint);
+            using var fontTitle = new Font("Arial", 32, FontStyle.Bold);
+            using var fontArtist = new Font("Arial", 24, FontStyle.Regular);
+            g.DrawString(title, fontTitle, Brushes.White, new PointF(20, 220));
+            g.DrawString(artist, fontArtist, Brushes.White, new PointF(20, 270));
 
-            // текст исполнителя
-            textPaint.TextSize = 24;
-            canvas.DrawText(artist, 20, 270, textPaint);
-
-            canvas.Flush();
-
-            using var image = SKImage.FromBitmap(bitmap);
-            using var data = image.Encode(SKEncodedImageFormat.Png, 90);
-            return $"data:image/png;base64,{Convert.ToBase64String(data.ToArray())}";
+            using var ms = new MemoryStream();
+            bmp.Save(ms, ImageFormat.Png);
+            return $"data:image/png;base64,{Convert.ToBase64String(ms.ToArray())}";
         }
     }
 }
